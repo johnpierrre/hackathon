@@ -10,6 +10,7 @@ Memifier:
 ## Deployment
 
 Frontend:
+    - "npm install"
     - "npm start"
 Backend:
     - "cd cmd"
