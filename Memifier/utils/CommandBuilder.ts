@@ -52,7 +52,7 @@ export class CommandBuilder {
   }
 
   setWidth(width: string): CommandBuilder {
-    // TODO: I do not know what happens if we call this with fps not set,
+    // WARN: I do not know what happens if we call this with fps not set,
     // nor do I know if we can set the scale without setting the FPS.
     // I just assume that it will use the original FPS in case it is not overriden
     this.width = this.fps
