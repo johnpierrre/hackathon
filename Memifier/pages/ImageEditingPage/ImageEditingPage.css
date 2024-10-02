@@ -1,0 +1,39 @@
+.container {
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    
+}
+
+.title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.input {
+    height: 60px;
+    border-color: gray;
+    border-width: 1px;
+    margin-bottom: 10px;
+    width: 80%;
+    padding: 10px; 
+    text-align: center;
+}
+
+.memeContainer {
+    margin: 10px 0;  
+    align-items: center;
+}
+
+.memeImage {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 5px;
+}
+
+.generatedMeme {
+    margin-top: 20px;
+    width: 200px;
+    height: 200px;
+}

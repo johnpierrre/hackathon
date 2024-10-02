@@ -1,45 +1,22 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Button, View, StyleSheet } from 'react-native';
+import HomePage from './pages/HomePage/HomePage';
+import ImageEditingPage from './pages/ImageEditingPage/ImageEditingPage';
+import VideoEditingPage from './pages/VideoEditingPage/VideoEditingPage';
+const Stack = createNativeStackNavigator();
 
-export default function App() {
-  const [text, setText] = React.useState('');
-
-  const handleCreateMeme = () => {
-    // Handle meme creation logic (e.g., send to backend)
-    console.log('Meme created with text:', text);
-  };
-
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Memifier: Create a Meme</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter meme text"
-        value={text}
-        onChangeText={setText}
-      />
-      <Button title="Create Meme" onPress={handleCreateMeme} />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="HomePage">
+        <Stack.Screen name="HomePage" component={HomePage} />
+        <Stack.Screen name="ImageEditing" component={ImageEditingPage} />
+        <Stack.Screen name="VideoEditing" component={VideoEditingPage} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 10,
-    width: '100%',
-    paddingHorizontal: 10,
-  },
-});
+export default App;

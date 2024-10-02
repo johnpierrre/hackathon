@@ -12,7 +12,8 @@ for backend and api:
     - "cd cmd"
     - "go run main.go"
 
-for frontend (NOTE: you will need expo go on your phone to scan the qr code or an android emulator on your pc):
+for frontend (NOTE: you will need EXPO GO on your phone to scan the qr code or an android emulator on your pc):
     - "cd Memifier"
-    - "npm install" (for all the dependencies)
-    - "npx expo start"
+    - "npm install" (for all the dependenciaes)
+    - "npx expo start" or "npx expo start --tunnel"
+    -*Press a to open android emulator or scan the qr code with EXPO GO *
