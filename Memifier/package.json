@@ -17,7 +17,8 @@
     "react-native": "0.74.5",
     "react-native-css": "^2.1.2",
     "react-native-gesture-handler": "~2.16.1",
-    "react-native-reanimated": "~3.10.1"
+    "react-native-reanimated": "~3.10.1",
+    "ffmpeg-kit-react-native": "^6.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
