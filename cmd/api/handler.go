@@ -13,7 +13,6 @@ func HandleMemeCreation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parse the multipart form containing the video and text
 	err := r.ParseMultipartForm(10 << 20) // 10 MB max file size
 	if err != nil {
 		http.Error(w, "Error parsing form", http.StatusInternalServerError)
@@ -41,10 +40,12 @@ func HandleMemeCreation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Get the text overlay from the request
 	text := r.FormValue("text")
 
-	//  just print the details (later, this will be processed)
+	// For now, just print the details (later, this will be processed)
 	fmt.Printf("Received video file and text: %s\n", text)
 
+	// Respond with success
 	w.Write([]byte("Meme created successfully!"))
 }

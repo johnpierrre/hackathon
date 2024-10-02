@@ -1,17 +1,18 @@
-# Structure and deployment
+# Structure and deployment 
 
-## Structure and languages
+## Structure 
 
-Memifier:
-    -cmd directory for the backend (written in GO)
-        -api directory for api and handler relateds functions (GO)
-        
-    -public directory for the frontend (written in react.js)
-## Deployment
+hackaton (git repo):
+    -cmd (backend and apis written in Go)
+    -Memifier (frontend in React Native with expo)
 
-Frontend:
-    - "npm install"
-    - "npm start"
-Backend:
+## Deployment 
+
+for backend and api:
     - "cd cmd"
     - "go run main.go"
+
+for frontend (NOTE: you will need expo go on your phone to scan the qr code or an android emulator on your pc):
+    - "cd Memifier"
+    - "npm install" (for all the dependencies)
+    - "npx expo start"
