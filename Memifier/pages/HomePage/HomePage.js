@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Button } from 'react-native';
+import styles from './styles'; 
 
 const HomePage = ({ navigation }) => {
   return (
@@ -9,14 +10,5 @@ const HomePage = ({ navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-});
 
 export default HomePage;

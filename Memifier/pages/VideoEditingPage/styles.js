@@ -25,9 +25,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   video: {
-    width: 250,
-    height: 250,
-    resizeMode: 'cover',
-    marginBottom: 5,
+    flex:1,
+    alignSelf:"stretch"
   },
 });
