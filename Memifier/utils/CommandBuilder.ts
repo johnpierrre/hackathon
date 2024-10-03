@@ -36,6 +36,7 @@ export class CommandBuilder {
     this.input = "-i " + input_path + " ";
     return this;
   }
+
   setOutput(output_path: string): CommandBuilder {
     this.output = output_path + ".gif" + " ";
     return this;
@@ -55,9 +56,10 @@ export class CommandBuilder {
     // WARN: I do not know what happens if we call this with fps not set,
     // nor do I know if we can set the scale without setting the FPS.
     // I just assume that it will use the original FPS in case it is not overriden
-    this.width = this.fps
-      ? `-vf "fps=${this.fps},scale=${width}:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"`
-      : `-vf "scale=${width}:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"`;
+    this.width =
+      "-vf" +
+      (this.fps ? `fps=${this.fps},` : "") +
+      `scale=${width}:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"`;
     return this;
   }
 
