@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Memifier",
-    "slug": "Memifier",
+    "name": "memifier",
+    "slug": "memifier",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

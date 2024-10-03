@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, FlatList, Image } from 'react-native';
-import styles from './ImageEditingPage.css'; 
+import { View, Text, TextInput, Button, FlatList, Image } from 'react-native';
+import styles from './styles';
 
 const ImageEditingPage = () => {
   const [text, setText] = useState('');
