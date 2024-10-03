@@ -9,6 +9,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#222",
     color: "#222"
   },
+  title: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: "#eee",
+    marginBottom: 10,
+  },
+  memeImage: {
+    width: 300,
+    height: 300,
+    marginBottom: 20,
+  },
   buttonContainer: {
     marginVertical: 10,
     width: '80%',

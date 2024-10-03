@@ -9,9 +9,11 @@ const VideoEditingPage = () => {
   const [videoUri, setVideoUri] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [video, setVideo] = useState(false); 
+  const [status, setStatus] = useState(null);
 
   const pickVideo = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted')
+      setStatus(await ImagePicker.requestMediaLibraryPermissionsAsync())
 
     if (status !== 'granted') {
       Alert.alert('Permission Denied', 'Sorry, we need media library permissions to make this work!');
@@ -36,24 +38,22 @@ const VideoEditingPage = () => {
 
   const handleEditVideo = async () => {
     if (!videoUri) {
-      Alert.alert('Error', 'Please select a video first.');
+      Alert.alert('Please select a video first.');
       return;
     }
 
     setIsProcessing(true);
 
     const outputUri = `${videoUri.substring(0, videoUri.lastIndexOf('.'))}-edited.mp4`;
-
     const command = `-i "${videoUri}" -vf "scale=320:240" "${outputUri}"`;
-
     const session = await FFmpegKit.execute(command);
     const returnCode = await session.getReturnCode();
 
     if (returnCode.isValueSuccess()) {
-      Alert.alert('Success', `Video processing completed! Saved to: ${outputUri}`);
+      Alert.alert(`Video processing completed! Saved to: ${outputUri}`);
     } else {
-      Alert.alert('Error', 'Video processing failed. Please try again.');
-      console.log('Error: ', returnCode);
+      Alert.alert('Video processing failed. Please try again.');
+      console.log('Process terminated with return value ', returnCode);
     }
 
     setIsProcessing(false);
@@ -79,10 +79,14 @@ const VideoEditingPage = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Video Editor</Text>
-      <Button title="Pick a Video" onPress={pickVideo} />
-      <Button title="Choose from sky's library" />
+      <View style={styles.buttonContainer}>
+        <Button color="#888" title="Pick a Video" onPress={pickVideo} />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button color="#888" title="Choose from sky's library" />
+      </View>
       {isProcessing && <Text>Processing video...</Text>}
-    </View>
+   </View>
   );
 };
 
