@@ -1,21 +1,30 @@
 import React from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
 import styles from './styles';
+
+const backgroundImage = require("../../assets/background.jpg");
 
 const HomePage = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <View style={styles.buttonContainer}>
-        <Button color="#888"
-                title="Go to Meme Templates"
-                onPress={() => navigation.navigate('Meme Templates')} />
+    <ImageBackground 
+      source={backgroundImage} 
+      style={styles.container}
+    >
+      <View style={styles.buttonsWrapper}>
+        <TouchableOpacity 
+          style={styles.buttonContainer}
+          onPress={() => navigation.navigate('Meme Templates')}
+        >
+          <Text style={styles.buttonText}> Templates </Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.buttonContainer}
+          onPress={() => navigation.navigate('Meme Clips')}
+        >
+          <Text style={styles.buttonText}> Clips </Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.buttonContainer}>
-        <Button color="#888"
-                title="Go to Meme Clips"
-                onPress={() => navigation.navigate('Meme Clips')} />
-      </View>
-    </View>
+    </ImageBackground>
   );
 };
 
