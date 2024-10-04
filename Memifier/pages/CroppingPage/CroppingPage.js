@@ -14,7 +14,7 @@ const CroppingPage = () => {
 
   const resizeVideo = async (width, height) => {
     setIsProcessing(true);
-    const outputUri = `${videoUri.split('.').slice(0, -1).join('.')}_resized.mp4`; // Create new output path
+    const outputUri = `${videoUri.split('.').slice(0, -1).join('.')}_resized.gif`; // Create new output path
     const session = FFmpegKit.execute(`-i ${videoUri} -vf "scale=${width}:${height}" ${outputUri}`);
     
     session.then(async (session) => {
