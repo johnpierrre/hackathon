@@ -11,11 +11,13 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {
         inherit system;
+        config.allowUnfree = true;
       };
     in {
       devShells.default = pkgs.mkShell {
         buildInputs = with pkgs; [
           nodejs
+          android-studio
         ];
       };
     });
