@@ -30,11 +30,7 @@ const VideoEditingPage = ({ navigation }) => {
 
     if (!result.canceled && result.assets && result.assets[0]) {
       const {uri, duration} = result.assets[0];
-     
-      if (duration > 10000) { 
-        Alert.alert('Error', 'Please select a video that is 10 seconds or shorter.');
-        return; 
-      }
+
       console.log('Picked video URI:', uri);
       setVideoUri(uri);
       setVideo(true);
@@ -80,7 +76,7 @@ const VideoEditingPage = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <Button color="#888" title="Choose from sky's library" onPress={GOTODrivePage}/>
       </View>
-      {isProcessing && <Text>Processing video...</Text>}
+
    </View>
   );
 };

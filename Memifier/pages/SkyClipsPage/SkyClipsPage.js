@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { Video } from 'expo-av';
 
-const SkyClipsVideos = ({navigation}) => {
+const SkyClipsVideos = ({ navigation }) => {
   
   // List of video paths (adjust these paths to match your actual videos)
   const videoPaths = [
@@ -12,32 +12,28 @@ const SkyClipsVideos = ({navigation}) => {
   ];
 
   const navigateToCropPage = (videoUri) => {
-    console.log(videoUri)
+    console.log(videoUri);
     if (!videoUri) {
       Alert.alert('Please select a video first.');
       return;
     }
     
-    navigation.navigate('Crop Page', { videoUri});
+    navigation.navigate('Crop Page', { videoUri });
   };
 
   return (
     <View>
       <Text>Local Videos</Text>
-      <FlatList
-        data={videoPaths}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => navigateToCropPage(item)}>
-            <Video
-              source={item}
-              useNativeControls
-              style={{ width: 300, height: 300 }}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        )}
-      />
+      {videoPaths.map((path, index) => (
+        <TouchableOpacity key={index} onPress={() => navigateToCropPage(path)}>
+          <Video
+            source={path}
+            useNativeControls
+            style={{ width: 300, height: 300 }}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      ))}
     </View>
   );
 };
