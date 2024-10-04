@@ -14,7 +14,7 @@ import { styles } from "./styles";
 
 const backgroundImage = require("../../assets/background.jpg");
 
-const VideoEditingPage = () => {
+const VideoEditingPage = ({ navigation }) => {
   const [videoUri, setVideoUri] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [video, setVideo] = useState(false);
@@ -71,6 +71,7 @@ const VideoEditingPage = () => {
 
         <Button
           title="Crop Video"
+          style={styles.buttonContainer}
           onPress={GOTOCroppingPage}
           disabled={isProcessing}
         />
