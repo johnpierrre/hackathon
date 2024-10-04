@@ -69,12 +69,13 @@ const VideoEditingPage = ({ navigation }) => {
           isLooping
         />
 
-        <Button
-          title="Crop Video"
+        <TouchableOpacity
           style={styles.buttonContainer}
           onPress={GOTOCroppingPage}
           disabled={isProcessing}
-        />
+        >
+          <Text style={styles.buttonText}>Crop</Text>
+        </TouchableOpacity>
         {isProcessing && <Text>Processing video...</Text>}
       </SafeAreaView>
     );
