@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@config-plugins/ffmpeg-kit-react-native": "^8.0.0",
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@react-navigation/elements": "^1.3.31",
     "@react-navigation/native": "^6.1.18",

@@ -3,7 +3,6 @@ import { View, Text, Button, Alert, SafeAreaView } from "react-native";
 import { Video } from "expo-av";
 import * as ImagePicker from "expo-image-picker";
 import { styles } from "./styles";
-import { useEffect } from "react/cjs/react.production.min";
 
 const VideoEditingPage = ({ navigation }) => {
   const [videoUri, setVideoUri] = useState(null);
@@ -51,21 +50,7 @@ const VideoEditingPage = ({ navigation }) => {
       return;
     }
 
-    setIsProcessing(true);
-
-    const outputUri = `${videoUri.substring(0, videoUri.lastIndexOf("."))}-edited.mp4`;
-    const command = `-i "${videoUri}" -vf "scale=320:240" "${outputUri}"`;
-    const session = await FFmpegKit.execute(command);
-    const returnCode = await session.getReturnCode();
-
-    if (returnCode.isValueSuccess()) {
-      Alert.alert(`Video processing completed! Saved to: ${outputUri}`);
-    } else {
-      Alert.alert("Video processing failed. Please try again.");
-      console.log("Process terminated with return value ", returnCode);
-    }
-
-    setIsProcessing(false);
+    navigation.navigate("Video Cropping", { videoUri });
   };
 
   if (video) {
@@ -80,8 +65,8 @@ const VideoEditingPage = ({ navigation }) => {
         />
 
         <Button
-          title="Edit Video"
-          onPress={handleEditVideo}
+          title="Crop Video"
+          onPress={GOTOCroppingPage}
           disabled={isProcessing}
         />
         {isProcessing && <Text>Processing video...</Text>}

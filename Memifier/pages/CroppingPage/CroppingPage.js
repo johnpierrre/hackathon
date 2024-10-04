@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { FFmpegKit } from "ffmpeg-kit-react-native";
 import { Text, Button, Alert, SafeAreaView, View } from "react-native";
 import { Video } from "expo-av";
 import { useRoute } from "@react-navigation/native";
@@ -12,19 +12,12 @@ const CroppingPage = () => {
   const [resizedUri, setResizedUri] = useState("");
 
   const resizeVideo = async (width, height) => {
-    try {
-      process = new FFmpeg(videoUri);
-      process.then(
-        function (video) {
-          console.log("The video can be processed");
-        },
-        function (err) {
-          console.log("Error");
-        },
-      );
-    } catch (e) {
-      console.log(e);
-    }
+    const session = await FFmpegKit.execute(
+      `-i ${videoUri} -vf"scale=${width}:${height}:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse file.gif"`,
+    ).then(async (session) => {
+      const output = session.getOutput();
+      console.log(output);
+    });
   };
 
   return (

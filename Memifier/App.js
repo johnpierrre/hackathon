@@ -49,6 +49,15 @@ const App = () => {
             headerTintColor: "#ddd",
           }}
         />
+        <Stack.Screen
+          name="Video Cropping"
+          component={CroppingPage}
+          options={{
+            title: "Video Cropping",
+            headerStyle: { backgroundColor: "#222" },
+            headerTintColor: "#ddd",
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
