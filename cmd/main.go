@@ -1,18 +1,28 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
+
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 
 	"github.com/johnpierrre/hackathon/cmd/api"
 )
 
 func main() {
-	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
+	router := mux.NewRouter()
+	router.HandleFunc("/api/resize", api.HandleVideoResize).Methods(http.MethodPost)
 
-	// Route for meme creation, using the api package
-	http.HandleFunc("/api/meme", api.HandleMemeCreation)
+	corsHandler := handlers.CORS(
+		handlers.AllowedOrigins([]string{"exp://x15yc3a-anonymous-8081.exp.direct"}),
+		handlers.AllowedMethods([]string{"POST", "GET", "OPTIONS", "DELETE"}),
+		handlers.AllowedHeaders([]string{"Content-Type"}),
+		handlers.AllowCredentials(),
+	)(router)
 
-	fmt.Println("Server listening on port 8080...")
-	http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", corsHandler)
+	if err != nil {
+		log.Fatalf("Server error: %v", err)
+	}
 }

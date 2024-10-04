@@ -35,6 +35,10 @@ const ImageEditingPage = ({ navigation }) => {
     );
   };
 
+  const selectMeme = (item) => {
+    selectedMeme === item ? setSelectedMeme(null) : setSelectedMeme(item);
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Memifier: Create a Meme</Text>
@@ -44,7 +48,7 @@ const ImageEditingPage = ({ navigation }) => {
         value={name}
         onChangeText={setName}
       />
-      <Button color="#888" title="Create Meme" onPress={() => handleCreateMeme()} />
+      <Button color="#888" title="Create Meme" onPress={handleCreateMeme} />
 
       <FlatList
         data={memes}
@@ -52,7 +56,11 @@ const ImageEditingPage = ({ navigation }) => {
         renderItem={({ item }) => (
           <View style={[styles.memeContainer, selectedMeme === item ? styles.selectedMemeContainer : null]}>
             <Image source={{ uri: item.url }} style={styles.memeImage} resizeMode="cover" />
-            <Button color="#888" title="Select" onPress={() => selectedMeme ? setSelectedMeme(null) : setSelectedMeme(item)} />
+            <Button
+              color="#888"
+              title="Select"
+              onPress={() => selectMeme(item)}
+            />
           </View>
         )}
       />

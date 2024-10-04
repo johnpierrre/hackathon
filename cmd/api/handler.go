@@ -1,51 +1,74 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
+	"os/exec"
+
+	"io"
 )
 
-func HandleMemeCreation(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
+func HandleVideoResize(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
 
-	err := r.ParseMultipartForm(10 << 20) // 10 MB max file size
+	videoURL := r.FormValue("videoUrl")
+	width := r.FormValue("width")
+	height := r.FormValue("height")
+
+	// Download the video file
+	videoFile, err := downloadVideo(videoURL)
 	if err != nil {
-		http.Error(w, "Error parsing form", http.StatusInternalServerError)
+		http.Error(w, "Failed to download video", http.StatusInternalServerError)
 		return
 	}
+	defer os.Remove(videoFile) // Clean up the video file
 
-	file, _, err := r.FormFile("video")
-	if err != nil {
-		http.Error(w, "Error retrieving the file", http.StatusInternalServerError)
+	// Define output file path
+	outputFile := fmt.Sprintf("%s-resized.mp4", videoFile[:len(videoFile)-4])
+
+	// Construct the FFmpeg command
+	cmd := exec.Command("ffmpeg", "-i", videoFile, "-vf", fmt.Sprintf("scale=%s:%s", width, height), outputFile)
+	if err := cmd.Run(); err != nil {
+		http.Error(w, "Failed to resize video", http.StatusInternalServerError)
 		return
 	}
-	defer file.Close()
+	defer os.Remove(outputFile) // Clean up the output file
 
-	// Save the video to a local file
-	outFile, err := os.Create("./uploads/video.mp4")
-	if err != nil {
-		http.Error(w, "Error saving the file", http.StatusInternalServerError)
-		return
-	}
-	defer outFile.Close()
-
-	_, err = io.Copy(outFile, file)
-	if err != nil {
-		http.Error(w, "Error saving the file", http.StatusInternalServerError)
-		return
+	// Prepare the response
+	response := map[string]interface{}{
+		"status": "success",
+		"uri":    outputFile,
 	}
 
-	// Get the text overlay from the request
-	text := r.FormValue("text")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	json.NewEncoder(w).Encode(response)
+}
 
-	// For now, just print the details (later, this will be processed)
-	fmt.Printf("Received video file and text: %s\n", text)
+func downloadVideo(url string) (string, error) {
+	// Download the video file and save it locally
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
 
-	// Respond with success
-	w.Write([]byte("Meme created successfully!"))
+	// Create a temporary file to store the downloaded video
+	tmpFile, err := os.CreateTemp("", "video-*.mp4")
+	if err != nil {
+		return "", err
+	}
+	defer tmpFile.Close()
+
+	// Write the downloaded video to the temporary file
+	if _, err = io.Copy(tmpFile, resp.Body); err != nil {
+		return "", err
+	}
+
+	return tmpFile.Name(), nil
 }
