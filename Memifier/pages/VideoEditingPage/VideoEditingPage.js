@@ -8,15 +8,17 @@ const VideoEditingPage = ({ navigation }) => {
   const [videoUri, setVideoUri] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [video, setVideo] = useState(false); 
-  const [status, setStatus] = useState(null);
 
   
   const pickVideo = async () => {
-    if (status !== 'granted')
-      setStatus(await ImagePicker.requestMediaLibraryPermissionsAsync())
+    
+    const status= await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'Sorry, we need media library permissions to make this work!');
+    if (status === null || status.granted !== true) {
+      Alert.alert(
+        "Permission Denied",
+        "Sorry, we need media library permissions to make this work!",
+      );
       return;
     }
 
@@ -40,29 +42,18 @@ const VideoEditingPage = ({ navigation }) => {
       console.log('Video picking canceled or failed.');
     }
   };
-  const GOTOCroppingPage = async () => {
+    const GOTOCroppingPage = () => {
     if (!videoUri) {
       Alert.alert('Please select a video first.');
       return;
     }
-
-    setIsProcessing(true);
-
-    const outputUri = `${videoUri.substring(0, videoUri.lastIndexOf('.'))}-edited.mp4`;
-    const command = `-i "${videoUri}" -vf "scale=320:240" "${outputUri}"`;
-    const session = await FFmpegKit.execute(command);
-    const returnCode = await session.getReturnCode();
-
-    if (returnCode.isValueSuccess()) {
-      Alert.alert(`Video processing completed! Saved to: ${outputUri}`);
-    } else {
-      Alert.alert('Video processing failed. Please try again.');
-      console.log('Process terminated with return value ', returnCode);
-    }
-
-    setIsProcessing(false);
+    
+    navigation.navigate('Crop Page', { videoUri });
   };
-
+  const GOTODrivePage = () => {
+    navigation.navigate('Drive Page');
+  };
+  
   if (video) {
     return (
       <SafeAreaView style={styles.container}>
@@ -74,7 +65,7 @@ const VideoEditingPage = ({ navigation }) => {
           isLooping
         />
 
-        <Button title="Edit Video" onPress={handleEditVideo} disabled={isProcessing}/>
+        <Button title="Crop Video" onPress={GOTOCroppingPage} disabled={isProcessing}/>
         {isProcessing && <Text>Processing video...</Text>}
       </SafeAreaView>
     );
@@ -87,7 +78,7 @@ const VideoEditingPage = ({ navigation }) => {
         <Button color="#888" title="Pick a Video" onPress={pickVideo}/>
       </View>
       <View style={styles.buttonContainer}>
-        <Button color="#888" title="Choose from sky's library"/>
+        <Button color="#888" title="Choose from sky's library" onPress={GOTODrivePage}/>
       </View>
       {isProcessing && <Text>Processing video...</Text>}
    </View>

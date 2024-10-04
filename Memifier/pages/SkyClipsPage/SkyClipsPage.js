@@ -1,55 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import { Video } from 'expo-av';
 
-const SkyClipsVideos = () => {
-  const [videos, setVideos] = useState([]);
-  const [error, setError] = useState(null);
+const SkyClipsVideos = ({navigation}) => {
+  
+  // List of video paths (adjust these paths to match your actual videos)
+  const videoPaths = [
+    require('../../Vídeos/2035509-hd_1920_1080_24fps.mp4'),
+    require('../../Vídeos/2631160-hd_1920_1080_30fps.mp4'),
+    require('../../Vídeos/2795749-uhd_3840_2160_25fps.mp4'),
+  ];
 
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const apikey='AIzaSyAPrIN7Vrhrue-0JEJf6VqCh6uZ0PCzOY0';
-        const folderid='1z2CnpC2vDIvLZ-cC5imNjdcdA5q2s9PW';
-        const url = `https://www.googleapis.com/drive/v3/files?q='${folderid}'+in+parents&key=${apikey}`;
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data && data.files) {
-          const videoFiles = data.files.filter(file => file.mimeType === 'video/mp4');
-          setVideos(videoFiles);
-        } else {
-          console.error('No files found in the response');
-          setError('No files found');
-        }
-      } catch (err) {
-        console.error('Error fetching videos:', err);
-        setError('Failed to fetch videos');
-      }
-    };
-
-    fetchVideos();
-  }, []);
+  const navigateToCropPage = (videoUri) => {
+    console.log(videoUri)
+    if (!videoUri) {
+      Alert.alert('Please select a video first.');
+      return;
+    }
+    
+    navigation.navigate('Crop Page', { videoUri});
+  };
 
   return (
     <View>
-      <Text>Google Drive Videos</Text>
-      {error ? (
-        <Text style={{ color: 'red' }}>{error}</Text>
-      ) : (
-        <FlatList
-          data={videos}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
+      <Text>Local Videos</Text>
+      <FlatList
+        data={videoPaths}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => navigateToCropPage(item)}>
             <Video
-              source={{ uri: `https://drive.google.com/uc?export=download&id=${item.id}` }}
+              source={item}
               useNativeControls
               style={{ width: 300, height: 300 }}
               resizeMode="contain"
             />
-          )}
-        />
-      )}
+          </TouchableOpacity>
+        )}
+      />
     </View>
   );
 };

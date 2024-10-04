@@ -12,29 +12,8 @@ const CroppingPage = () => {
 
   const resizeVideo = async (width, height) => {
     setIsProcessing(true);
-
     try {
-      console.log(`videoUrl=${encodeURIComponent(videoUri)}&width=${width}&height=${height}`);
-      const response = await fetch('http://localhost:8080/api/resize', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          videoUrl: videoUri,
-          width: width.toString(),
-          height: height.toString(),
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setResizedUri(result.uri); 
-        Alert.alert('Success', `Video resizing completed! Saved to: ${result.uri}`);
-      } else {
-        Alert.alert('Error', 'Video resizing failed. Please try again.');
-      }
+      
     } catch (error) {
       console.error('Error during video resizing:', error);
       Alert.alert('Error', 'An error occurred during video processing. Please try again.');

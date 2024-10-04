@@ -7,7 +7,6 @@ import StaticMemeCreationPage from './pages/StaticMemeCreationPage/StaticMemeCre
 import VideoEditingPage from './pages/VideoEditingPage/VideoEditingPage';
 import CroppingPage from './pages/CroppingPage/CroppingPage' 
 import SkyClipsPage from './pages/SkyClipsPage/SkyClipsPage'
-import StaticMemeCreationPage from './pages/StaticMemeCreationPage/StaticMemeCreationPage';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -68,43 +67,7 @@ const App = () => {
             headerTintColor: '#ddd',
           }}
         />
-      <Stack.Navigator initialRouteName="Memifier">
-        <Stack.Screen
-          name="Memifier"
-          component={HomePage}
-          options={{
-            title: 'Memefier',
-            headerStyle: { backgroundColor: '#222' },
-            headerTintColor: '#ddd',
-          }}
-        />
-        <Stack.Screen
-          name="Meme Templates"
-          component={ImageEditingPage}
-          options={{
-            title: 'Meme Templates',
-            headerStyle: { backgroundColor: '#222' },
-            headerTintColor: '#ddd',
-          }}
-        />
-        <Stack.Screen
-          name="Meme Clips"
-          component={VideoEditingPage}
-          options={{
-            title: 'Meme Clips',
-            headerStyle: { backgroundColor: '#222' },
-            headerTintColor: '#ddd',
-          }}
-        />
-        <Stack.Screen
-          name="Meme Editor"
-          component={StaticMemeCreationPage}
-          options={{
-            title: 'Meme Editor',
-            headerStyle: { backgroundColor: '#222' },
-            headerTintColor: '#ddd',
-          }}
-        />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
