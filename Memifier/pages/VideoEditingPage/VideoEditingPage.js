@@ -69,8 +69,7 @@ const VideoEditingPage = () => {
           resizeMode="contain"
           isLooping
         />
-
-        <Button title="Edit Video" onPress={handleEditVideo()} disabled={isProcessing()}/>
+        <Button title="Edit Video" onPress={handleEditVideo} disabled={isProcessing}/>
         {isProcessing && <Text>Processing video...</Text>}
       </SafeAreaView>
     );
@@ -80,7 +79,7 @@ const VideoEditingPage = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Video Editor</Text>
       <View style={styles.buttonContainer}>
-        <Button color="#888" title="Pick a Video" onPress={pickVideo()}/>
+        <Button color="#888" title="Pick a Video" onPress={pickVideo}/>
       </View>
       <View style={styles.buttonContainer}>
         <Button color="#888" title="Choose from sky's library"/>

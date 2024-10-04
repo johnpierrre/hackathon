@@ -1,18 +1,19 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, Button, Image, Alert, Share } from 'react-native';
-// import { captureRef } from 'react-native-view-shot';
-// import * as FileSystem from 'expo-file-system';
-// import { Sepia } from 'react-native-image-filter-kit';
-// import * as ImagePicker from 'expo-image-picker';
+import ViewShot from 'react-native-view-shot';
+import { captureRef } from 'react-native-view-shot';
+import * as FileSystem from 'expo-file-system';
+import * as MediaLibrary from 'expo-media-library';
+import { Sepia } from 'react-native-image-filter-kit';
+import * as ImagePicker from 'expo-image-picker';
 import styles from './styles';
 
 const StaticMemeCreationPage = ({ route, navigation }) => {
   const { memeName, memeUrl } = route.params;
-  // const canvasRef = useRef(null);
+  const viewRef = useRef();
   const [selectedImage, setSelectedImage] = useState({ uri: memeUrl });
   const [permissionResult, setPermissionResult] = useState(false);
 
-  /*
   useEffect(() => {
     const requestPermission = async () => {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -43,45 +44,86 @@ const StaticMemeCreationPage = ({ route, navigation }) => {
     }
   };
 
+  const saveToGallery = async (fileUri) => {
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+
+      if (status === 'granted') {
+        const asset = await MediaLibrary.createAssetAsync(fileUri);
+        await MediaLibrary.createAlbumAsync('Recent', asset, false);
+        Alert.alert('Success', 'Image saved to gallery!');
+      } else {
+        Alert.alert('Permission Denied', 'Cannot save image without permission');
+      }
+    } catch (error) {
+      console.error('Error saving image:', error);
+      Alert.alert('Error', 'Failed to save the image');
+    }
+  };
+
   const saveMeme = async () => {
     try {
-      const uri = await captureRef(canvasRef, {
-        format: 'gif',
+      const uri = await captureRef(viewRef, {
+        format: 'png',
         quality: 1.0,
       });
       
-      const path = `${FileSystem.documentDirectory}meme.png`;
-      await FileSystem.moveAsync({
-        from: uri,
-        to: path,
-      });
-      Alert.alert('Success', `${memeName} saved to your device`);
+      await saveToGallery(uri);
     } catch (error) {
       Alert.alert('Error', 'Failed to save meme');
       console.error('Error saving meme:', error);
     }
   };
 
+  /*
   const shareMeme = async () => {
     try {
-      const uri = await captureRef(canvasRef, {
-        format: 'gif',
+      const uri = await captureRef(viewRef, {
+        format: 'png',
         quality: 1.0,
       });
-      
-      await Share.share({
-        url: uri,
-        message: `Check out my meme: ${memeName}`,
+
+      if (!uri) {
+        Alert.alert('Error', 'Failed to capture meme image');
+        return;
+      }
+
+      const fileUri = `${FileSystem.cacheDirectory}meme_${Date.now()}.png`;
+      await FileSystem.moveAsync({
+        from: uri,
+        to: fileUri,
       });
+
+      console.log('File URI:', fileUri);
+
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status === 'granted') {
+        const asset = await MediaLibrary.createAssetAsync(fileUri);
+        await MediaLibrary.createAlbumAsync('Recent', asset, false);
+        Alert.alert('Success', 'Image saved to gallery!');
+
+        const shareResponse = await Share.share({
+          url: asset.uri,
+          message: `Check out my meme: ${memeName}`,
+        });
+
+        console.log('Share response:', shareResponse);
+      } else {
+        Alert.alert('Permission Denied', 'Cannot save image without permission');
+      }
     } catch (error) {
       Alert.alert('Error', 'Failed to share meme');
       console.error('Error sharing meme:', error);
     }
-  };
-  */
 
-  /*
-      <View ref={canvasRef} style={styles.canvasContainer}>
+      <View style={styles.buttonContainer}>
+        <Button color="#888" title="Share Meme" onPress={shareMeme}/>
+      </View>
+  */
+  
+  return (
+    <View style={styles.container}>
+      <ViewShot ref={viewRef} options={{ format: "png", quality: 0.8 }} style={styles.canvasContainer}>
         {selectedImage.uri && (
           <Image
             source={{ uri: selectedImage.uri }}
@@ -89,26 +131,14 @@ const StaticMemeCreationPage = ({ route, navigation }) => {
             resizeMode="contain"
           />
         )}
-        <Text style={styles.title}>{memeName()}</Text>
-      </View>
-      
-      onPress={pickImage()} 
-      onPress={saveMeme()}
-      onPress={shareMeme()}
-  */
-      
-
-  return (
-    <View style={styles.container}>
-            
+        <Text style={styles.title}>{memeName}</Text>
+      </ViewShot>
+           
       <View style={styles.buttonContainer}>
-        <Button color="#888" title="Pick Image" />
+        <Button color="#888" title="Pick Image" onPress={pickImage}/>
       </View>
       <View style={styles.buttonContainer}>
-        <Button color="#888" title="Save Meme"  />
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button color="#888" title="Share Meme"  />
+        <Button color="#888" title="Save Meme" onPress={saveMeme}/>
       </View>
     </View>
   );

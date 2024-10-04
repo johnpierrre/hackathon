@@ -22,10 +22,6 @@ const ImageEditingPage = ({ navigation }) => {
     fetchMemes();
   }, []);
 
-  const handleSelection = () => {
-    selectedMeme ? setSelectedMeme(null) : setSelectedMeme(item);
-  }
-   
   const handleCreateMeme = async () => {
     if (!selectedMeme)
       return;
@@ -38,6 +34,10 @@ const ImageEditingPage = ({ navigation }) => {
     );
   };
 
+  const selectMeme = (item) => {
+    selectedMeme === item ? setSelectedMeme(null) : setSelectedMeme(item);
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Memifier: Create a Meme</Text>
@@ -47,7 +47,7 @@ const ImageEditingPage = ({ navigation }) => {
         value={name}
         onChangeText={setName}
       />
-      <Button color="#888" title="Create Meme" onPress={handleCreateMeme()} />
+      <Button color="#888" title="Create Meme" onPress={handleCreateMeme} />
 
       <FlatList
         data={memes}
@@ -58,7 +58,7 @@ const ImageEditingPage = ({ navigation }) => {
             <Button
               color="#888"
               title="Select"
-              onPress={handleSelection}
+              onPress={() => selectMeme(item)}
             />
           </View>
         )}
