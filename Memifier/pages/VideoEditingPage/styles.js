@@ -23,8 +23,17 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   buttonContainer: {
-    marginVertical: 10,
-    width: '80%',
+    width: '50%',
+    height: '10%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#888',
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
   },
   videoContainer: {
     marginVertical: 10,

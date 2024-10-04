@@ -1,25 +1,29 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, Button, Image, Alert, Share } from 'react-native';
+import { View, Text, Alert, TouchableOpacity, Image } from 'react-native';
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import ViewShot from 'react-native-view-shot';
-import { captureRef } from 'react-native-view-shot';
-import * as FileSystem from 'expo-file-system';
-import * as MediaLibrary from 'expo-media-library';
-import { Sepia } from 'react-native-image-filter-kit';
 import * as ImagePicker from 'expo-image-picker';
+import * as MediaLibrary from 'expo-media-library';
+import { GestureHandlerRootView, PanGestureHandler, PinchGestureHandler } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import styles from './styles';
 
-const StaticMemeCreationPage = ({ route, navigation }) => {
+const StaticMemeCreationPage = ({ route }) => {
   const { memeName, memeUrl } = route.params;
   const viewRef = useRef();
-  const [selectedImage, setSelectedImage] = useState({ uri: memeUrl });
+  const [currentMemeUrl, setCurrentMemeUrl] = useState(memeUrl);
+  const [addedImages, setAddedImages] = useState([]);
   const [permissionResult, setPermissionResult] = useState(false);
-
+  
   useEffect(() => {
-    const requestPermission = async () => {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const requestPermissions = async () => {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
       setPermissionResult(status === 'granted');
+      if (status !== 'granted') {
+        Alert.alert('Permission to access media library is required!');
+      }
     };
-    requestPermission();
+    requestPermissions();
   }, []);
 
   const pickImage = async () => {
@@ -37,111 +41,115 @@ const StaticMemeCreationPage = ({ route, navigation }) => {
       });
 
       if (!result.canceled && result.assets && result.assets[0]) {
-        setSelectedImage({ uri: result.assets[0].uri });
+        const newImage = {
+          uri: result.assets[0].uri,
+          scale: 1,
+          position: { x: 0, y: 0 },
+          rotation: 0,
+        };
+        console.log('Added image:', newImage); // Check if the image URI is valid
+        setAddedImages(prev => [...prev, newImage]);
       }
     } catch (error) {
       Alert.alert('Error picking image', error.message);
     }
   };
 
-  const saveToGallery = async (fileUri) => {
+  const _rotate90 = async () => {
     try {
-      const { status } = await MediaLibrary.requestPermissionsAsync();
-
-      if (status === 'granted') {
-        const asset = await MediaLibrary.createAssetAsync(fileUri);
-        await MediaLibrary.createAlbumAsync('Recent', asset, false);
-        Alert.alert('Success', 'Image saved to gallery!');
-      } else {
-        Alert.alert('Permission Denied', 'Cannot save image without permission');
-      }
+      const manipResult = await manipulateAsync(
+        currentMemeUrl,
+        [{ rotate: 90 }],
+        { compress: 1, format: SaveFormat.PNG }
+      );
+      setCurrentMemeUrl(manipResult.uri);
     } catch (error) {
-      console.error('Error saving image:', error);
-      Alert.alert('Error', 'Failed to save the image');
+      Alert.alert('Error rotating/flipping image', error.message);
     }
   };
 
   const saveMeme = async () => {
     try {
-      const uri = await captureRef(viewRef, {
-        format: 'png',
-        quality: 1.0,
-      });
-      
-      await saveToGallery(uri);
+      const uri = await viewRef.current.capture();
+      if (permissionResult) {
+        const asset = await MediaLibrary.createAssetAsync(uri);
+        Alert.alert('Meme saved!', `Your meme has been saved to the gallery: ${asset.uri}`);
+      }
     } catch (error) {
-      Alert.alert('Error', 'Failed to save meme');
-      console.error('Error saving meme:', error);
+      Alert.alert('Error saving meme', error.message);
     }
   };
 
-  /*
-  const shareMeme = async () => {
-    try {
-      const uri = await captureRef(viewRef, {
-        format: 'png',
-        quality: 1.0,
-      });
+  const handlePanGestureEvent = (event, index) => {
+    const { translationX, translationY } = event.nativeEvent;
+    setAddedImages(prevImages => {
+      const newImages = [...prevImages];
+      newImages[index].position.x += 0.05 * translationX;
+      newImages[index].position.y += 0.05 * translationY;
+      return newImages;
+    });
+  };
 
-      if (!uri) {
-        Alert.alert('Error', 'Failed to capture meme image');
-        return;
-      }
+  const handlePinchGestureEvent = (event, index) => {
+    const { scale } = event.nativeEvent;
+    setAddedImages(prevImages => {
+      const newImages = [...prevImages];
+      newImages[index].scale = scale;
+      return newImages;
+    });
+  };
 
-      const fileUri = `${FileSystem.cacheDirectory}meme_${Date.now()}.png`;
-      await FileSystem.moveAsync({
-        from: uri,
-        to: fileUri,
-      });
-
-      console.log('File URI:', fileUri);
-
-      const { status } = await MediaLibrary.requestPermissionsAsync();
-      if (status === 'granted') {
-        const asset = await MediaLibrary.createAssetAsync(fileUri);
-        await MediaLibrary.createAlbumAsync('Recent', asset, false);
-        Alert.alert('Success', 'Image saved to gallery!');
-
-        const shareResponse = await Share.share({
-          url: asset.uri,
-          message: `Check out my meme: ${memeName}`,
-        });
-
-        console.log('Share response:', shareResponse);
-      } else {
-        Alert.alert('Permission Denied', 'Cannot save image without permission');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to share meme');
-      console.error('Error sharing meme:', error);
-    }
-
-      <View style={styles.buttonContainer}>
-        <Button color="#888" title="Share Meme" onPress={shareMeme}/>
-      </View>
-  */
-  
   return (
-    <View style={styles.container}>
-      <ViewShot ref={viewRef} options={{ format: "png", quality: 0.8 }} style={styles.canvasContainer}>
-        {selectedImage.uri && (
-          <Image
-            source={{ uri: selectedImage.uri }}
-            style={styles.memeImage}
-            resizeMode="contain"
-          />
-        )}
-        <Text style={styles.title}>{memeName}</Text>
-      </ViewShot>
-           
-      <View style={styles.buttonContainer}>
-        <Button color="#888" title="Pick Image" onPress={pickImage}/>
+    <GestureHandlerRootView style={styles.container}>
+      <View style={styles.memeBlock}>
+        <ViewShot ref={viewRef} options={{ format: "png", quality: 0.8 }} style={styles.canvasContainer}>
+          {currentMemeUrl && (
+            <Image
+              source={{ uri: currentMemeUrl }}
+              style={[styles.memeImage, { zIndex: 0 }]}
+              resizeMode="contain"
+            />
+          )}
+          {addedImages.map((image, index) => (
+            <PanGestureHandler
+              key={index}
+              onGestureEvent={(event) => handlePanGestureEvent(event, index)}
+            >
+              <PinchGestureHandler
+                onGestureEvent={(event) => handlePinchGestureEvent(event, index)}
+              >
+                <View style={{
+                  position: 'absolute',
+                  top: image.position.y,
+                  left: image.position.x,
+                  transform: [
+                    { scale: image.scale },
+                    { rotate: `${image.rotation}rad` },
+                  ],
+                  zIndex: 1
+                }}>
+                  <Image source={{ uri: image.uri }} style={styles.addedImage} />
+                </View>
+              </PinchGestureHandler>
+            </PanGestureHandler>
+          ))}
+          <Text style={styles.title}>{memeName}</Text>
+        </ViewShot>
+      </View>     
+      <View style={styles.buttonsWrapper}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={pickImage}>
+          <Icon name="image" size={30} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonContainer} onPress={_rotate90}>
+          <Icon name="refresh" size={30} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonContainer} onPress={saveMeme}>
+          <Icon name="save" size={30} color="#fff" />
+        </TouchableOpacity>
       </View>
-      <View style={styles.buttonContainer}>
-        <Button color="#888" title="Save Meme" onPress={saveMeme}/>
-      </View>
-    </View>
+    </GestureHandlerRootView>
   );
 };
 
 export default StaticMemeCreationPage;
+

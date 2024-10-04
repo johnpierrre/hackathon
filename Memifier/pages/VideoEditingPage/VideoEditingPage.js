@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, Button, Alert, SafeAreaView } from 'react-native';
+import { View, Text, Button, Alert, SafeAreaView, ImageBackground, TouchableOpacity } from 'react-native';
 import { Video } from 'expo-av'; 
 import * as ImagePicker from 'expo-image-picker';
 import { FFmpegKit } from 'react-native-ffmpeg';
 import { styles } from './styles';
+
+const backgroundImage = require("../../assets/background.jpg");
 
 const VideoEditingPage = () => {
   const [videoUri, setVideoUri] = useState(null);
@@ -76,16 +78,18 @@ const VideoEditingPage = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Video Editor</Text>
-      <View style={styles.buttonContainer}>
-        <Button color="#888" title="Pick a Video" onPress={pickVideo}/>
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button color="#888" title="Choose from sky's library"/>
-      </View>
+    <ImageBackground 
+      source={backgroundImage} 
+      style={styles.container}
+    >
+      <TouchableOpacity style={styles.buttonContainer} onPress={pickVideo}>
+        <Text style={styles.buttonText}> Pick a Video </Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.buttonContainer}>
+        <Text style={styles.buttonText}> Sky's library </Text>
+      </TouchableOpacity>
       {isProcessing && <Text>Processing video...</Text>}
-   </View>
+   </ImageBackground>
   );
 };
 

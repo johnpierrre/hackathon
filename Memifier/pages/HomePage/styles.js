@@ -5,13 +5,29 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: "#222",
-    color: "#222"
+    backgroundColor: "#444",
+  },
+  buttonsWrapper: {
+    position: 'relative',
+    align: 'center',
+    width: '100%',
+    height: '10%',
+    flexDirection: 'col',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonContainer: {
-    marginVertical: 10,
-    width: '80%',
+    width: '40%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#888',
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 
