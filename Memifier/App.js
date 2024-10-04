@@ -1,11 +1,10 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Button, View, StyleSheet } from 'react-native';
 import HomePage from './pages/HomePage/HomePage';
 import ImageEditingPage from './pages/ImageEditingPage/ImageEditingPage';
-import StaticMemeCreationPage from './pages/StaticMemeCreationPage/StaticMemeCreationPage';
 import VideoEditingPage from './pages/VideoEditingPage/VideoEditingPage';
+import StaticMemeCreationPage from './pages/StaticMemeCreationPage/StaticMemeCreationPage';
 const Stack = createNativeStackNavigator();
 
 const App = () => {

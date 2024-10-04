@@ -119,9 +119,6 @@ const StaticMemeCreationPage = ({ route, navigation }) => {
       <View style={styles.buttonContainer}>
         <Button color="#888" title="Share Meme" onPress={shareMeme}/>
       </View>
-
-  };
-
   */
   
   return (
@@ -142,6 +139,7 @@ const StaticMemeCreationPage = ({ route, navigation }) => {
       </View>
       <View style={styles.buttonContainer}>
         <Button color="#888" title="Save Meme" onPress={saveMeme}/>
+  };
       </View>
     </View>
   );

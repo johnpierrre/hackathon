@@ -8,12 +8,12 @@ const HomePage = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <Button color="#888"
                 title="Go to Meme Templates"
-                onPress={() => navigation.navigate('Meme Templates')} />
+                onPress={navigation.navigate('Meme Templates')} />
       </View>
       <View style={styles.buttonContainer}>
         <Button color="#888"
                 title="Go to Meme Clips"
-                onPress={() => navigation.navigate('Meme Clips')} />
+                onPress={navigation.navigate('Meme Clips')} />
       </View>
     </View>
   );

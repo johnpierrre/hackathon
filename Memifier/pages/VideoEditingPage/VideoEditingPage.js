@@ -70,20 +70,20 @@ const VideoEditingPage = () => {
           isLooping
         />
 
-        <Button title="Edit Video" onPress={handleEditVideo} disabled={isProcessing} />
+        <Button title="Edit Video" onPress={handleEditVideo()} disabled={isProcessing()}/>
         {isProcessing && <Text>Processing video...</Text>}
       </SafeAreaView>
     );
-  }
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Video Editor</Text>
       <View style={styles.buttonContainer}>
-        <Button color="#888" title="Pick a Video" onPress={pickVideo} />
+        <Button color="#888" title="Pick a Video" onPress={pickVideo()}/>
       </View>
       <View style={styles.buttonContainer}>
-        <Button color="#888" title="Choose from sky's library" />
+        <Button color="#888" title="Choose from sky's library"/>
       </View>
       {isProcessing && <Text>Processing video...</Text>}
    </View>
