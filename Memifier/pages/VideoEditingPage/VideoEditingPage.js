@@ -3,18 +3,18 @@ import { View, Text, Button, Alert, SafeAreaView } from "react-native";
 import { Video } from "expo-av";
 import * as ImagePicker from "expo-image-picker";
 import { styles } from "./styles";
+import { useEffect } from "react/cjs/react.production.min";
 
 const VideoEditingPage = ({ navigation }) => {
   const [videoUri, setVideoUri] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [video, setVideo] = useState(false);
-  const [status, setStatus] = useState(null);
 
   const pickVideo = async () => {
-    if (status !== "granted")
-      setStatus(await ImagePicker.requestMediaLibraryPermissionsAsync());
+    const status = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (status !== "granted") {
+    console.log(status);
+    if (status === null || status.granted !== true) {
       Alert.alert(
         "Permission Denied",
         "Sorry, we need media library permissions to make this work!",
