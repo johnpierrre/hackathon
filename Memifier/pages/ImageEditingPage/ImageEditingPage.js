@@ -1,20 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, Image } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, Image, Alert } from 'react-native';
 import styles from './styles';
 
-const ImageEditingPage = () => {
-  const [text, setText] = useState('');
+const ImageEditingPage = ({ navigation }) => {
+  const [name, setName] = useState('');
   const [memes, setMemes] = useState([]);
   const [selectedMeme, setSelectedMeme] = useState(null);
   const [generatedMemeUrl, setGeneratedMemeUrl] = useState('');
 
   useEffect(() => {
-    // fetchMemes();
+    const fetchMemes = async () => {
+      try {
+        const response = await fetch('https://api.imgflip.com/get_memes');
+        const { data } = await response.json();
+        setMemes(data.memes);
+        console.log("[INFO]: fetch memes successfully");
+      } catch (err) {
+        console.log("[ERROR]: fetchMemes failed:", err);
+      }
+    };
+    fetchMemes();
   }, []);
 
+   
   const handleCreateMeme = async () => {
-    console.log(text);
-    alert('Meme creation logic undefined');
+    if (!selectedMeme)
+      return;
+
+    navigation.navigate(
+      'Meme Editor', {
+        memeName: name,
+        memeUrl:  selectedMeme.url,
+      }
+    );
   };
 
   return (
@@ -22,19 +40,19 @@ const ImageEditingPage = () => {
       <Text style={styles.title}>Memifier: Create a Meme</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter meme text"
-        value={text}
-        onChangeText={setText}
+        placeholder="Enter Meme name"
+        value={name}
+        onChangeText={setName}
       />
-      <Button title="Create Meme" onPress={handleCreateMeme} />
+      <Button color="#888" title="Create Meme" onPress={() => handleCreateMeme()} />
 
       <FlatList
         data={memes}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.memeContainer}>
+          <View style={[styles.memeContainer, selectedMeme === item ? styles.selectedMemeContainer : null]}>
             <Image source={{ uri: item.url }} style={styles.memeImage} resizeMode="cover" />
-            <Button title="Select" onPress={() => setSelectedMeme(item)} />
+            <Button color="#888" title="Select" onPress={() => selectedMeme ? setSelectedMeme(null) : setSelectedMeme(item)} />
           </View>
         )}
       />

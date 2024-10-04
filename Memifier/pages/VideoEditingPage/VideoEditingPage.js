@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, Button, Alert, SafeAreaView } from 'react-native';
 import { Video } from 'expo-av'; 
 import * as ImagePicker from 'expo-image-picker';
-import { FFmpegKit } from 'react-native-ffmpeg';
 import { styles } from './styles';
 
-const VideoEditingPage = () => {
+const VideoEditingPage = ({ navigation }) => {
   const [videoUri, setVideoUri] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [video, setVideo] = useState(false); 
 
+  
   const pickVideo = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -25,7 +25,12 @@ const VideoEditingPage = () => {
     });
 
     if (!result.canceled && result.assets && result.assets[0]) {
-      const uri = result.assets[0].uri;
+      const {uri, duration} = result.assets[0];
+     
+      if (duration > 10000) { 
+        Alert.alert('Error', 'Please select a video that is 10 seconds or shorter.');
+        return; 
+      }
       console.log('Picked video URI:', uri);
       setVideoUri(uri);
       setVideo(true);
@@ -33,30 +38,16 @@ const VideoEditingPage = () => {
       console.log('Video picking canceled or failed.');
     }
   };
-
-  const handleEditVideo = async () => {
+  const GOTOCroppingPage = async () => {
     if (!videoUri) {
-      Alert.alert('Error', 'Please select a video first.');
+      Alert.alert('Error', 'Please pick a video first.');
       return;
     }
-
-    setIsProcessing(true);
-
-    const outputUri = `${videoUri.substring(0, videoUri.lastIndexOf('.'))}-edited.mp4`;
-
-    const command = `-i "${videoUri}" -vf "scale=320:240" "${outputUri}"`;
-
-    const session = await FFmpegKit.execute(command);
-    const returnCode = await session.getReturnCode();
-
-    if (returnCode.isValueSuccess()) {
-      Alert.alert('Success', `Video processing completed! Saved to: ${outputUri}`);
-    } else {
-      Alert.alert('Error', 'Video processing failed. Please try again.');
-      console.log('Error: ', returnCode);
-    }
-
-    setIsProcessing(false);
+    navigation.navigate('Crop Page', { videoUri }); 
+  };
+  const GOTOClipsPage = async () => {
+    
+    navigation.navigate('Drive Page', { videoUri }); 
   };
 
   if (video) {
@@ -70,7 +61,7 @@ const VideoEditingPage = () => {
           isLooping
         />
 
-        <Button title="Edit Video" onPress={handleEditVideo} disabled={isProcessing} />
+        <Button title="Crop Video" onPress={GOTOCroppingPage} disabled={isProcessing}  />
         {isProcessing && <Text>Processing video...</Text>}
       </SafeAreaView>
     );
@@ -80,7 +71,7 @@ const VideoEditingPage = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Video Editor</Text>
       <Button title="Pick a Video" onPress={pickVideo} />
-      <Button title="Choose from sky's library" />
+      <Button title="Choose from sky's library" onPress={GOTOClipsPage} />
       {isProcessing && <Text>Processing video...</Text>}
     </View>
   );
